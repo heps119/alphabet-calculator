@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alphabet Sum Calculator - HEPS Dream 회전문</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-gold: #f59e0b;
+            --accent-gold-hover: #d97706;
+            --border-color: #334155;
+            --chip-bg: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 헤더 및 원본 비율 유지 로고 영역 */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-container {
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-container img {
+            max-height: 110px; /* 로고 최대 높이 설정 */
+            width: auto;      /* 가로 폭은 비율에 맞춰 자동 조절 */
+            height: auto;     /* 세로 높이도 비율에 맞춰 자동 조절 (찌그러짐 방지) */
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+        }
+
+        .brand-badge {
+            display: inline-block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            background: rgba(245, 158, 11, 0.1);
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            margin-bottom: 0.75srem;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* 입력 및 결과 카드 */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            background-color: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+        }
+
+        .scoreboard {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-gold);
+        }
+
+        /* 상세 글자 분해 영역 */
+        .breakdown-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            min-height: 60px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            align-content: flex-start;
+        }
+
+        .chip {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.4rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 45px;
+        }
+
+        .chip-char {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .chip-val {
+            font-size: 0.75rem;
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        .empty-notice {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: auto;
+        }
+
+        /* 샘플 단어 버튼 */
+        .presets {
+            margin-bottom: 2rem;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.5rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        /* A-Z 레퍼런스 차트 */
+        .reference-toggle {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .ref-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 4px;
+            margin-top: 1rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .ref-grid.show {
+            max-height: 300px;
+        }
+
+        .ref-cell {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .ref-cell span {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.65rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 헤더 섹션 -->
+        <div class="header">
+            <div class="logo-container">
+                <!-- 원본 비율이 왜곡되지 않도록 설정된 이미지 태그 -->
+                <img src="HEPS_LOGO.jpg" alt="HEPS Logo" onerror="this.style.display='none'">
+            </div>
+            <div class="brand-badge">HEPS Dream 회전문</div>
+            <h1>Alphabet Sum Calculator</h1>
+            <p class="subtitle">Type any word to calculate its alphabetical value (A=1 through Z=26)</p>
+        </div>
+
+        <!-- 입력창 -->
+        <div class="input-group">
+            <label for="wordInput">Enter Word or Name</label>
+            <input type="text" id="wordInput" placeholder="e.g. ATTITUDE" value="ATTITUDE" autocomplete="off" spellcheck="false">
+        </div>
+
+        <!-- 점수판 -->
+        <div class="scoreboard">
+            <div class="score-label">Total Sum</div>
+            <div class="score-value" id="totalScore">0</div>
+        </div>
+
+        <!-- 글자별 분해 칩 -->
+        <div class="breakdown-section">
+            <label>Character Breakdown</label>
+            <div class="chips-container" id="chipsContainer">
+                <!-- 동적 생성 -->
+            </div>
+        </div>
+
+        <!-- 샘플 프리셋 버튼 -->
+        <div class="presets">
+            <label>Quick Presets</label>
+            <div class="preset-buttons">
+                <button class="preset-btn" onclick="setPreset('ATTITUDE')">ATTITUDE</button>
+                <button class="preset-btn" onclick="setPreset('KNOWLEDGE')">KNOWLEDGE</button>
+                <button class="preset-btn" onclick="setPreset('HARDWORK')">HARDWORK</button>
+                <button class="preset-btn" onclick="setPreset('DISCIPLINE')">DISCIPLINE</button>
+            </div>
+        </div>
+
+        <!-- A-Z 레퍼런스 토글 -->
+        <div class="reference-toggle">
+            <button class="toggle-btn" onclick="toggleReference()">Toggle A-Z Reference Table</button>
+            <div class="ref-grid" id="refGrid">
+                <!-- 자바스크립트로 A-Z 주입 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inputEl = document.getElementById('wordInput');
+        const totalScoreEl = document.getElementById('totalScore');
+        const chipsContainerEl = document.getElementById('chipsContainer');
+        const refGridEl = document.getElementById('refGrid');
+
+        function calculate() {
+            const val = inputEl.value.toUpperCase();
+            let total = 0;
+            chipsContainerEl.innerHTML = '';
+
+            if (val.length === 0) {
+                totalScoreEl.textContent = '0';
+                chipsContainerEl.innerHTML = '<span class="empty-notice">Type something above...</span>';
+                return;
+            }
+
+            let hasValidChar = false;
+
+            for (let i = 0; i < val.length; i++) {
+                const char = val[i];
+                const code = char.charCodeAt(0);
+
+                if (code >= 65 && code <= 90) { // A-Z
+                    hasValidChar = true;
+                    const score = code - 64;
+                    total += score;
+
+                    const chip = document.createElement('div');
+                    chip.className = 'chip';
+                    chip.innerHTML = `
+                        <span class="chip-char">${char}</span>
+                        <span class="chip-val">${score}</span>
+                    `;
+                    chipsContainerEl.appendChild(chip);
+                }
+            }
+
+            if (!hasValidChar) {
+                chipsContainerEl.innerHTML = '<span class="empty-notice">Please use English alphabets (A-Z)</span>';
+            }
+
+            totalScoreEl.textContent = total;
+        }
+
+        function setPreset(word) {
+            inputEl.value = word;
+            calculate();
+            inputEl.focus();
+        }
+
+        function toggleReference() {
+            refGridEl.classList.toggle('show');
+        }
+
+        // A-Z 레퍼런스 그리드 생성
+        for (let i = 65; i <= 90; i++) {
+            const char = String.fromCharCode(i);
+            const score = i - 64;
+            const cell = document.createElement('div');
+            cell.className = 'ref-cell';
+            cell.innerHTML = `<strong>${char}</strong><span>${score}</span>`;
+            refGridEl.appendChild(cell);
+        }
+
+        inputEl.addEventListener('input', calculate);
+        
+        // 초기 실행
+        calculate();
+    </script>
+</body>
+</html>
